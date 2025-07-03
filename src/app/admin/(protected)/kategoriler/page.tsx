@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Plus, Edit, Trash2 } from "lucide-react"
 import DeleteButton from "@/components/admin/DeleteButton"
 import { deleteCategory } from "@/app/admin/actions"
-import Link from "next/link"
 
 export default async function AdminCategoriesPage() {
   const supabase = await createServerComponentClient()
@@ -72,7 +71,7 @@ export default async function AdminCategoriesPage() {
                             size="sm"
                             asChild
                           >
-                            <Link href={`/admin/kategoriler/${category.id}`}>
+                            <Link href={`/admin/kategoriler/duzenle/${category.id}`}>
                               <Edit className="h-4 w-4" />
                             </Link>
                           </Button>

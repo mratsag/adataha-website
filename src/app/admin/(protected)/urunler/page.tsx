@@ -1,9 +1,5 @@
 // src/app/admin/(protected)/urunler/page.tsx
 
-"use client"
-import { useState, useMemo } from "react"
-// src/app/admin/(protected)/urunler/page.tsx
-import { createServerComponentClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,21 +9,25 @@ import Image from "next/image"
 import DeleteButton from "@/components/admin/DeleteButton"
 import { deleteProduct } from "@/app/admin/actions"
 
-export default function AdminProductsPage({ products: initialProducts = [] }: { products?: any[] }) {
+
+"use client"
+import { useState, useMemo } from "react"
+// src/app/admin/(protected)/urunler/page.tsx
+import { createServerComponentClient } from "@/lib/supabase/server"
+
+export default function AdminProductsPage({ productsFromServer }: { productsFromServer: any[] }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [products, setProducts] = useState(initialProducts)
 
-  // If you want to fetch products on mount, you can use useEffect here.
-  // For now, we assume products are passed as props (SSR/SSG).
+  const products = productsFromServer || []
 
-  const filteredProducts = useMemo(() => {
-    if (!searchTerm) return products
-    return products.filter((product) =>
-      product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  }, [products, searchTerm])
+  const filteredProducts = useMemo(
+    () =>
+      products.filter((product) =>
+        product.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [products, searchTerm]
+  )
 
   return (
     <div className="space-y-6">
@@ -130,7 +130,7 @@ export default function AdminProductsPage({ products: initialProducts = [] }: { 
                             size="sm"
                             asChild
                           >
-                            <Link href={`/admin/urunler/${product.id}`}>
+                            <Link href={`/admin/urunler/duzenle/${product.id}`}>
                               <Edit className="h-4 w-4" />
                             </Link>
                           </Button>
