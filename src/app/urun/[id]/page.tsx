@@ -5,10 +5,37 @@ import Link from "next/link"
 import { createServerComponentClient } from "@/lib/supabase/server"
 import { ChevronRight, Package, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import type { Metadata } from "next"
 
 interface ProductPageProps {
   params: {
     id: string
+  }
+}
+
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const supabase = await createServerComponentClient()
+  const { data: product } = await supabase
+    .from("products")
+    .select(`
+      *,
+      category:categories(name)
+    `)
+    .eq("id", params.id)
+    .single()
+
+  if (!product) {
+    return {
+      title: "Ürün Bulunamadı",
+    }
+  }
+
+  return {
+    title: `${product.name} - Adataha`,
+    description: product.description || `${product.name} ürünü hakkında detaylı bilgi. ${product.category?.name} kategorisinde.`,
+    openGraph: {
+      images: product.image_url ? [product.image_url] : [],
+    },
   }
 }
 
@@ -39,7 +66,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   return (
     <>
-      {/* Breadcrumb */}
+        {/* Breadcrumb */}
       <section className="bg-muted/30 border-b">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex items-center space-x-2 text-sm">

@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
+import Footer from "@/components/layout/Footer"
+import Header from "@/components/layout/Header"
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -67,7 +69,9 @@ export default function ContactPage() {
 
   return (
     <>
-      {/* Hero Section */}
+      <Header />
+      <main className="min-h-screen pt-16 md:pt-20">
+        {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-transparent to-primary/5 py-16 md:py-24">
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
         
@@ -211,6 +215,8 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+    </main>
+      <Footer />
     </>
   )
 }

@@ -1,4 +1,5 @@
 // src/app/(public)/hakkimizda/page.tsx
+import Footer from "@/components/layout/Footer"
 import { Award, Users, Package, TrendingUp } from "lucide-react"
 
 export default function AboutPage() {
@@ -123,7 +124,7 @@ export default function AboutPage() {
           </a>
         </div>
       </section>
+      <Footer />
     </>
   )
 }
-

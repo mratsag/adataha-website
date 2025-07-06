@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plus, Edit, Trash2 } from "lucide-react"
 import DeleteButton from "@/components/admin/DeleteButton"
-import { deleteCategory } from "@/app/admin/actions"
 import Link from "next/link"
 
 export default async function AdminCategoriesPage() {
@@ -46,7 +45,7 @@ export default async function AdminCategoriesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {categories && categories.length > 0 ? (
+          {(categories && categories.length > 0) ? (
             <div className="relative overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-xs uppercase bg-muted">
@@ -58,7 +57,7 @@ export default async function AdminCategoriesPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {categories.map((category) => (
+                  {(categories ?? []).map((category) => (
                     <tr key={category.id} className="border-b hover:bg-muted/50">
                       <td className="px-6 py-4 font-medium">{category.name}</td>
                       <td className="px-6 py-4 text-muted-foreground">{category.slug}</td>
@@ -77,8 +76,9 @@ export default async function AdminCategoriesPage() {
                             </Link>
                           </Button>
                           <DeleteButton
-                            onDelete={() => deleteCategory(category.id)}
+                            id={category.id}
                             itemName={category.name}
+                            type="category"
                           />
                         </div>
                       </td>

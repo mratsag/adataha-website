@@ -1,5 +1,6 @@
 // src/app/admin/(protected)/urunler/page.tsx
-
+"use client"
+import { createServerComponentClient } from "@/lib/supabase/server"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -7,27 +8,23 @@ import { Plus, Edit, Trash2, Search, Package } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import DeleteButton from "@/components/admin/DeleteButton"
-import { deleteProduct } from "@/app/admin/actions"
 
 
-"use client"
-import { useState, useMemo } from "react"
-// src/app/admin/(protected)/urunler/page.tsx
-import { createServerComponentClient } from "@/lib/supabase/server"
 
-export default function AdminProductsPage({ productsFromServer }: { productsFromServer: any[] }) {
+import { useState, useMemo, useEffect } from "react"
+
+export default function AdminProductsPage({ products: initialProducts }: { products: any[] }) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [products, setProducts] = useState(initialProducts || [])
 
-  const products = productsFromServer || []
-
-  const filteredProducts = useMemo(
-    () =>
-      products.filter((product) =>
-        product.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    [products, searchTerm]
-  )
+  // Filter products by search term
+  const filteredProducts = useMemo(() => {
+    if (!searchTerm) return products
+    return products.filter((product) =>
+      product.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }, [products, searchTerm])
 
   return (
     <div className="space-y-6">
@@ -135,8 +132,9 @@ export default function AdminProductsPage({ productsFromServer }: { productsFrom
                             </Link>
                           </Button>
                           <DeleteButton
-                            onDelete={() => deleteProduct(product.id)}
+                            id={product.id}
                             itemName={product.name}
+                            type="product"
                           />
                         </div>
                       </td>

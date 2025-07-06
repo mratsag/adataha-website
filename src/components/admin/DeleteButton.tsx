@@ -16,20 +16,27 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Trash2, Loader2 } from "lucide-react"
 import { toast } from "sonner"
+import { deleteCategory, deleteProduct } from "@/app/admin/actions"
+import { useRouter } from "next/navigation"
 
 interface DeleteButtonProps {
-  onDelete: () => Promise<{ error?: string; success?: boolean }>
+  id: string
   itemName: string
+  type: "category" | "product"
 }
 
-export default function DeleteButton({ onDelete, itemName }: DeleteButtonProps) {
+export default function DeleteButton({ id, itemName, type }: DeleteButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
 
   const handleDelete = async () => {
     setIsLoading(true)
     try {
-      const result = await onDelete()
+      const result = type === "category" 
+        ? await deleteCategory(id)
+        : await deleteProduct(id)
+        
       if (result.error) {
         toast.error("Silme işlemi başarısız", {
           description: result.error,
@@ -37,6 +44,7 @@ export default function DeleteButton({ onDelete, itemName }: DeleteButtonProps) 
       } else {
         toast.success("Başarıyla silindi")
         setIsOpen(false)
+        router.refresh()
       }
     } catch (error) {
       toast.error("Bir hata oluştu")

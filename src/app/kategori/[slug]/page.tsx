@@ -4,10 +4,31 @@ import { createServerComponentClient } from "@/lib/supabase/server"
 import ProductGrid from "@/components/product/ProductGrid"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
 
 interface CategoryPageProps {
   params: {
     slug: string
+  }
+}
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const supabase = await createServerComponentClient()
+  const { data: category } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("slug", params.slug)
+    .single()
+
+  if (!category) {
+    return {
+      title: "Kategori Bulunamadı",
+    }
+  }
+
+  return {
+    title: `${category.name} - Adataha`,
+    description: `Adataha ${category.name} kategorisindeki ürünleri inceleyin. Cafe ve restaurant ihtiyaçlarınız için kaliteli ürünler.`,
   }
 }
 
@@ -34,7 +55,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <>
-      {/* Breadcrumb */}
+        {/* Breadcrumb */}
       <section className="bg-muted/30 border-b">
         <div className="container mx-auto px-4 py-4">
           <nav className="flex items-center space-x-2 text-sm">
