@@ -1,6 +1,8 @@
 // src/app/(public)/hakkimizda/page.tsx
+import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
 import { Award, Users, Package, TrendingUp } from "lucide-react"
+
 
 export default function AboutPage() {
   const features = [
@@ -28,7 +30,9 @@ export default function AboutPage() {
 
   return (
     <>
+      <Header />
       {/* Hero Section */}
+      
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-transparent to-primary/5 py-16 md:py-24">
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
         

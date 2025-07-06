@@ -124,7 +124,7 @@ export default function Footer() {
               <li className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
                 <span className="text-sm text-muted-foreground">
-                  Ankara, Türkiye
+                  Sakarya, Türkiye
                 </span>
               </li>
               <li className="flex items-center space-x-3">

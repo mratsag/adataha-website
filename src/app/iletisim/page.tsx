@@ -56,13 +56,13 @@ export default function ContactPage() {
     {
       icon: MapPin,
       title: "Adres",
-      content: "Ankara, Türkiye",
+      content: "Sakarya, Türkiye",
       link: null
     },
     {
       icon: Clock,
       title: "Çalışma Saatleri",
-      content: "Pazartesi - Cuma: 09:00 - 18:00",
+      content: "Pazartesi - Cuma: 09:00 - 20:00",
       link: null
     }
   ]
