@@ -125,7 +125,7 @@ export default async function HomePage() {
                   <div className="text-sm text-muted-foreground">Mutlu Müşteri</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">10+</div>
+                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">5+</div>
                   <div className="text-sm text-muted-foreground">Yıllık Tecrübe</div>
                 </div>
               </div>

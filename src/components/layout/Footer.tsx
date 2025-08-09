@@ -127,15 +127,26 @@ export default function Footer() {
                   Sakarya, Türkiye
                 </span>
               </li>
-              <li className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                <a
-                  href="tel:+903121234567"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                >
-                  iş :0276 5466 0264
-                  tel : 0532 5659 667
-                </a>
+              <li className="flex items-start space-x-3">
+                <Phone className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <div>
+                    <a
+                      href="tel:+902765466264"
+                      className="hover:text-primary transition-colors"
+                    >
+                      İş: 0276 546 62 64
+                    </a>
+                  </div>
+                  <div>
+                    <a
+                      href="tel:+905325659667"
+                      className="hover:text-primary transition-colors"
+                    >
+                      Tel: 0532 565 96 67
+                    </a>
+                  </div>
+                </div>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-muted-foreground flex-shrink-0" />
