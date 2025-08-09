@@ -91,7 +91,7 @@ export default function RootLayout({
         </ThemeProvider>
         
         {/* Google Analytics */}
-        {"G-6NH2X5GNGG" && (
+        {process.env.NODE_ENV === 'production' && (
           <>
             <Script
               src="https://www.googletagmanager.com/gtag/js?id=G-6NH2X5GNGG"
