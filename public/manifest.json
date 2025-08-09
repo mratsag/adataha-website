@@ -1,0 +1,16 @@
+{
+  "name": "Adataha - Profesyonel Cafe & Restaurant Ürünleri",
+  "short_name": "Adataha",
+  "description": "Türkiye'nin önde gelen cafe ve restaurant ürünleri tedarikçisi",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
