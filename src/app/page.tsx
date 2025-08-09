@@ -175,21 +175,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* CSS for grid pattern */}
-        <style jsx>{`
-          .bg-grid-pattern {
-            background-image: 
-              linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-          }
-          .animate-pulse {
-            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-          }
-          .delay-1000 {
-            animation-delay: 1s;
-          }
-        `}</style>
+        {/* CSS moved to globals.css */}
       </main>
       <Footer />
     </>
