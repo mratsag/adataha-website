@@ -230,7 +230,11 @@ export default function ContactPage() {
                 <p className="text-sm text-muted-foreground mb-4">
                   Acil durumlar için WhatsApp hattımızdan bize ulaşabilirsiniz.
                 </p>
-                <Button variant="outline" className="w-full">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.open('https://wa.me/905325659667?text=Merhaba, Adataha ürünleri hakkında bilgi almak istiyorum.', '_blank')}
+                >
                   WhatsApp ile İletişime Geç
                 </Button>
               </div>
