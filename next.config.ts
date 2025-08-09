@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverComponentsExternalPackages: [],
+  },
+  output: 'standalone',
 };
 
 export default nextConfig;

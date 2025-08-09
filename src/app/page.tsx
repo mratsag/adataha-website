@@ -4,6 +4,17 @@ import CategoryGrid from "@/components/category/CategoryGrid"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
 import { Sparkles } from "lucide-react"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Ana Sayfa",
+  description: "Adataha ile profesyonel cafe ve restaurant ürünleri. Kaliteli şuruplar, püreler, kahveler ve daha fazlası. Türkiye'nin güvenilir tedarikçisi.",
+  openGraph: {
+    title: "Adataha - Profesyonel Cafe & Restaurant Ürünleri",
+    description: "Adataha ile profesyonel cafe ve restaurant ürünleri. Kaliteli şuruplar, püreler, kahveler ve daha fazlası.",
+    url: "https://www.adataha.com.tr",
+  },
+}
 
 export default async function HomePage() {
   const supabase = await createServerComponentClient()
@@ -17,8 +28,58 @@ export default async function HomePage() {
     console.error("Error fetching categories:", error)
   }
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Adataha",
+    "url": "https://www.adataha.com.tr",
+    "logo": "https://www.adataha.com.tr/logo.png",
+    "description": "Türkiye'nin önde gelen cafe ve restaurant ürünleri tedarikçisi. Kaliteli şuruplar, püreler, kahveler ve daha fazlası.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "TR",
+      "addressLocality": "Türkiye"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+90-532-565-96-67",
+      "contactType": "customer service",
+      "availableLanguage": "Turkish"
+    },
+    "sameAs": [
+      "https://www.instagram.com/adataha",
+      "https://www.facebook.com/adataha"
+    ]
+  }
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Adataha",
+    "url": "https://www.adataha.com.tr",
+    "description": "Profesyonel cafe ve restaurant ürünleri tedarikçisi",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Adataha"
+    }
+  }
+
   return (
     <>
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(organizationSchema)
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(websiteSchema)
+        }}
+      />
+
       <Header />
       <main className="min-h-screen pt-16 md:pt-20">
         {/* Hero Section */}
@@ -115,6 +176,20 @@ export default async function HomePage() {
         </section>
 
         {/* CSS for grid pattern */}
+        <style jsx>{`
+          .bg-grid-pattern {
+            background-image: 
+              linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+          }
+          .animate-pulse {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          }
+          .delay-1000 {
+            animation-delay: 1s;
+          }
+        `}</style>
       </main>
       <Footer />
     </>
