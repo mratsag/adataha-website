@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION, // Google Search Console'dan alınacak
+    google: "k3PwFDJphRTdT4xft1_oeyIsxfKYkP3QBRToGiRHPV8", // Google Search Console doğrulaması
   },
 }
 
