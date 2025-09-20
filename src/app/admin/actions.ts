@@ -74,30 +74,45 @@ export async function uploadProductImage(formData: FormData) {
     console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type)
 
     // Bucket'ın var olup olmadığını kontrol et
-    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets()
-    
-    if (bucketsError) {
-      console.error('Bucket listesi alınamadı:', bucketsError)
-      return { error: 'Storage bucket\'ına erişilemiyor' }
+    let productImagesBucket
+    try {
+      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets()
+      
+      if (bucketsError) {
+        console.error('Bucket listesi alınamadı:', bucketsError)
+        // Bucket listesi alınamazsa direkt upload'u deneyelim
+        console.log('Bucket listesi alınamadı, direkt upload deneniyor...')
+      } else {
+        productImagesBucket = buckets?.find(bucket => bucket.name === 'product-images')
+        console.log('Mevcut bucket\'lar:', buckets?.map(b => b.name))
+        console.log('product-images bucket bulundu:', !!productImagesBucket)
+      }
+    } catch (error) {
+      console.error('Bucket kontrolü hatası:', error)
+      // Hata durumunda direkt upload'u deneyelim
     }
-
-    const productImagesBucket = buckets?.find(bucket => bucket.name === 'product-images')
     
     if (!productImagesBucket) {
       console.log('product-images bucket bulunamadı, oluşturuluyor...')
       
-      const { data: newBucket, error: createError } = await supabase.storage.createBucket('product-images', {
-        public: true,
-        allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
-        fileSizeLimit: 5242880 // 5MB
-      })
+      try {
+        const { data: newBucket, error: createError } = await supabase.storage.createBucket('product-images', {
+          public: true,
+          allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+          fileSizeLimit: 5242880 // 5MB
+        })
 
-      if (createError) {
-        console.error('Bucket oluşturma hatası:', createError)
-        return { error: 'Storage bucket\'ı oluşturulamadı' }
+        if (createError) {
+          console.error('Bucket oluşturma hatası:', createError)
+          // Bucket oluşturulamazsa direkt upload'u deneyelim
+          console.log('Bucket oluşturulamadı, direkt upload deneniyor...')
+        } else {
+          console.log('Bucket oluşturuldu:', newBucket)
+        }
+      } catch (error) {
+        console.error('Bucket oluşturma hatası:', error)
+        // Hata durumunda direkt upload'u deneyelim
       }
-
-      console.log('Bucket oluşturuldu:', newBucket)
     }
 
     // Dosya validasyonu
@@ -116,6 +131,7 @@ export async function uploadProductImage(formData: FormData) {
 
     console.log('Uploading to path:', filePath)
 
+    // Upload'u dene
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('product-images')
       .upload(filePath, file, {
@@ -129,6 +145,45 @@ export async function uploadProductImage(formData: FormData) {
         message: uploadError.message,
         name: uploadError.name
       })
+      
+      // Eğer bucket yoksa, tekrar oluşturmayı dene
+      if (uploadError.message.includes('not found') || uploadError.message.includes('does not exist')) {
+        console.log('Bucket bulunamadı, tekrar oluşturuluyor...')
+        
+        try {
+          const { error: createError } = await supabase.storage.createBucket('product-images', {
+            public: true
+          })
+          
+          if (!createError) {
+            console.log('Bucket oluşturuldu, upload tekrar deneniyor...')
+            
+            // Tekrar upload dene
+            const { data: retryUploadData, error: retryUploadError } = await supabase.storage
+              .from('product-images')
+              .upload(filePath, file, {
+                cacheControl: '3600',
+                upsert: false
+              })
+            
+            if (retryUploadError) {
+              throw retryUploadError
+            }
+            
+            console.log('Retry upload successful:', retryUploadData)
+            // Retry başarılıysa devam et
+            const { data: { publicUrl } } = supabase.storage
+              .from('product-images')
+              .getPublicUrl(filePath)
+
+            console.log('Upload successful, URL:', publicUrl)
+            return { success: true, url: publicUrl }
+          }
+        } catch (retryError) {
+          console.error('Retry upload failed:', retryError)
+        }
+      }
+      
       throw uploadError
     }
 
