@@ -73,6 +73,33 @@ export async function uploadProductImage(formData: FormData) {
 
     console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type)
 
+    // Bucket'ın var olup olmadığını kontrol et
+    const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets()
+    
+    if (bucketsError) {
+      console.error('Bucket listesi alınamadı:', bucketsError)
+      return { error: 'Storage bucket\'ına erişilemiyor' }
+    }
+
+    const productImagesBucket = buckets?.find(bucket => bucket.name === 'product-images')
+    
+    if (!productImagesBucket) {
+      console.log('product-images bucket bulunamadı, oluşturuluyor...')
+      
+      const { data: newBucket, error: createError } = await supabase.storage.createBucket('product-images', {
+        public: true,
+        allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+        fileSizeLimit: 5242880 // 5MB
+      })
+
+      if (createError) {
+        console.error('Bucket oluşturma hatası:', createError)
+        return { error: 'Storage bucket\'ı oluşturulamadı' }
+      }
+
+      console.log('Bucket oluşturuldu:', newBucket)
+    }
+
     // Dosya validasyonu
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     if (!allowedTypes.includes(file.type)) {
@@ -89,7 +116,7 @@ export async function uploadProductImage(formData: FormData) {
 
     console.log('Uploading to path:', filePath)
 
-    const { error: uploadError } = await supabase.storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
       .from('product-images')
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -98,8 +125,14 @@ export async function uploadProductImage(formData: FormData) {
 
     if (uploadError) {
       console.error('Storage upload error:', uploadError)
+      console.error('Upload error details:', {
+        message: uploadError.message,
+        name: uploadError.name
+      })
       throw uploadError
     }
+
+    console.log('Upload data:', uploadData)
 
     const { data: { publicUrl } } = supabase.storage
       .from('product-images')
