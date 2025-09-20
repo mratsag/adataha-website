@@ -1,7 +1,6 @@
 // src/app/admin/actions.ts
 "use server"
 
-import { createServerActionClient } from "@/lib/supabase/server"
 import { createClient } from '@supabase/supabase-js'
 import { revalidatePath } from "next/cache"
 

@@ -3,7 +3,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { createCategory, updateCategory } from "@/app/admin/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,7 +19,6 @@ interface CategoryFormProps {
 
 export default function CategoryForm({ category }: CategoryFormProps) {
   const router = useRouter()
-  const supabase = createClient()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: category?.name || "",
