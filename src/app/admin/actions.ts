@@ -6,9 +6,20 @@ import { revalidatePath } from "next/cache"
 
 // Service role client for admin operations (bypasses RLS)
 function createServiceRoleClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  
+  // Debug logging for production issues
+  if (!supabaseUrl) {
+    console.error('NEXT_PUBLIC_SUPABASE_URL is not defined')
+  }
+  if (!serviceRoleKey) {
+    console.error('SUPABASE_SERVICE_ROLE_KEY is not defined')
+  }
+  
   return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    supabaseUrl!,
+    serviceRoleKey!,
     {
       auth: {
         autoRefreshToken: false,
@@ -51,28 +62,32 @@ export async function deleteProduct(id: string) {
 }
 
 export async function uploadProductImage(formData: FormData) {
-  const supabase = createServiceRoleClient()
-  
-  const file = formData.get('file') as File
-  
-  if (!file) {
-    return { error: 'Dosya bulunamadı' }
-  }
-
-  // Dosya validasyonu
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-  if (!allowedTypes.includes(file.type)) {
-    return { error: 'Desteklenmeyen dosya formatı' }
-  }
-
-  if (file.size > 5 * 1024 * 1024) { // 5MB
-    return { error: 'Dosya çok büyük (max 5MB)' }
-  }
-
   try {
+    const supabase = createServiceRoleClient()
+    
+    const file = formData.get('file') as File
+    
+    if (!file) {
+      return { error: 'Dosya bulunamadı' }
+    }
+
+    console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type)
+
+    // Dosya validasyonu
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!allowedTypes.includes(file.type)) {
+      return { error: 'Desteklenmeyen dosya formatı' }
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB
+      return { error: 'Dosya çok büyük (max 5MB)' }
+    }
+
     const fileExt = file.name.split('.').pop()
     const fileName = `${Date.now()}.${fileExt}`
     const filePath = `products/${fileName}`
+
+    console.log('Uploading to path:', filePath)
 
     const { error: uploadError } = await supabase.storage
       .from('product-images')
@@ -82,6 +97,7 @@ export async function uploadProductImage(formData: FormData) {
       })
 
     if (uploadError) {
+      console.error('Storage upload error:', uploadError)
       throw uploadError
     }
 
@@ -89,6 +105,7 @@ export async function uploadProductImage(formData: FormData) {
       .from('product-images')
       .getPublicUrl(filePath)
 
+    console.log('Upload successful, URL:', publicUrl)
     return { success: true, url: publicUrl }
   } catch (error: unknown) {
     console.error('Upload error:', error)
@@ -105,20 +122,29 @@ export async function createProduct(productData: {
   category_id: string
   image_url?: string | null
 }) {
-  const supabase = createServiceRoleClient()
-  
-  const { data, error } = await supabase
-    .from("products")
-    .insert(productData)
-    .select()
-    .single()
+  try {
+    const supabase = createServiceRoleClient()
+    
+    console.log('Creating product with data:', productData)
+    
+    const { data, error } = await supabase
+      .from("products")
+      .insert(productData)
+      .select()
+      .single()
 
-  if (error) {
-    return { error: error.message }
+    if (error) {
+      console.error('Product creation error:', error)
+      return { error: error.message }
+    }
+
+    console.log('Product created successfully:', data)
+    revalidatePath("/admin/urunler")
+    return { success: true, data }
+  } catch (err) {
+    console.error('Unexpected error in createProduct:', err)
+    return { error: 'Beklenmeyen bir hata oluştu' }
   }
-
-  revalidatePath("/admin/urunler")
-  return { success: true, data }
 }
 
 export async function updateProduct(id: string, productData: {
