@@ -3,9 +3,20 @@ import { createClient } from '@supabase/supabase-js'
 
 export async function GET() {
   try {
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    const keyToUse = serviceRoleKey || anonKey
+    
+    if (!keyToUse) {
+      return NextResponse.json({
+        success: false,
+        error: 'No valid Supabase key found'
+      })
+    }
+    
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      keyToUse
     )
 
     // Bucket'ları listele
@@ -24,6 +35,7 @@ export async function GET() {
     
     return NextResponse.json({
       success: true,
+      keyType: serviceRoleKey ? 'service_role' : 'anon',
       buckets: buckets?.map(b => ({ name: b.name, public: b.public, id: b.id })) || [],
       productImagesBucket: productImagesBucket ? {
         name: productImagesBucket.name,

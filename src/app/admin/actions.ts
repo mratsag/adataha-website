@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache"
 function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
   // Debug logging for production issues
   if (!supabaseUrl) {
@@ -17,9 +18,18 @@ function createServiceRoleClient() {
     console.error('SUPABASE_SERVICE_ROLE_KEY is not defined')
   }
   
+  // Service role key geçersizse anon key ile dene
+  const keyToUse = serviceRoleKey || anonKey
+  
+  if (!keyToUse) {
+    throw new Error('No valid Supabase key found')
+  }
+  
+  console.log('Using key type:', serviceRoleKey ? 'service_role' : 'anon')
+  
   return createClient(
     supabaseUrl!,
-    serviceRoleKey!,
+    keyToUse,
     {
       auth: {
         autoRefreshToken: false,
