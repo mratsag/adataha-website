@@ -4,7 +4,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
-import { uploadProductImage } from "@/app/admin/actions"
+import { uploadProductImage, createProduct, updateProduct } from "@/app/admin/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -147,21 +147,20 @@ export default function ProductForm({ product, categories }: ProductFormProps) {
 
       if (isEditMode) {
         // Güncelleme
-        const { error } = await supabase
-          .from("products")
-          .update(productData)
-          .eq("id", product.id)
-
-        if (error) throw error
+        const result = await updateProduct(product.id, productData)
+        
+        if (result.error) {
+          throw new Error(result.error)
+        }
 
         toast.success("Ürün güncellendi")
       } else {
         // Yeni ekleme
-        const { error } = await supabase
-          .from("products")
-          .insert(productData)
-
-        if (error) throw error
+        const result = await createProduct(productData)
+        
+        if (result.error) {
+          throw new Error(result.error)
+        }
 
         toast.success("Ürün eklendi")
       }

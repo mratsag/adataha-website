@@ -4,6 +4,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase/client"
+import { createCategory, updateCategory } from "@/app/admin/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -57,27 +58,26 @@ export default function CategoryForm({ category }: CategoryFormProps) {
     try {
       if (isEditMode) {
         // Güncelleme
-        const { error } = await supabase
-          .from("categories")
-          .update({
-            name: formData.name,
-            slug: formData.slug,
-          })
-          .eq("id", category.id)
+        const result = await updateCategory(category.id, {
+          name: formData.name,
+          slug: formData.slug,
+        })
 
-        if (error) throw error
+        if (result.error) {
+          throw new Error(result.error)
+        }
 
         toast.success("Kategori güncellendi")
       } else {
         // Yeni ekleme
-        const { error } = await supabase
-          .from("categories")
-          .insert({
-            name: formData.name,
-            slug: formData.slug,
-          })
+        const result = await createCategory({
+          name: formData.name,
+          slug: formData.slug,
+        })
 
-        if (error) throw error
+        if (result.error) {
+          throw new Error(result.error)
+        }
 
         toast.success("Kategori eklendi")
       }
