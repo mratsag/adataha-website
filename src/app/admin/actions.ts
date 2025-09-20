@@ -178,6 +178,7 @@ export async function updateProduct(id: string, productData: {
 export async function createCategory(categoryData: {
   name: string
   slug: string
+  parent_id?: string | null
 }) {
   const supabase = createServiceRoleClient()
   
@@ -198,6 +199,7 @@ export async function createCategory(categoryData: {
 export async function updateCategory(id: string, categoryData: {
   name: string
   slug: string
+  parent_id?: string | null
 }) {
   const supabase = createServiceRoleClient()
   

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
@@ -15,14 +16,16 @@ import type { Category } from "@/types"
 
 interface CategoryFormProps {
   category?: Category
+  parentCategories?: Category[]
 }
 
-export default function CategoryForm({ category }: CategoryFormProps) {
+export default function CategoryForm({ category, parentCategories = [] }: CategoryFormProps) {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: category?.name || "",
     slug: category?.slug || "",
+    parent_id: category?.parent_id || "none",
   })
 
   const isEditMode = !!category
@@ -59,6 +62,7 @@ export default function CategoryForm({ category }: CategoryFormProps) {
         const result = await updateCategory(category.id, {
           name: formData.name,
           slug: formData.slug,
+          parent_id: formData.parent_id === "none" ? null : formData.parent_id,
         })
 
         if (result.error) {
@@ -71,6 +75,7 @@ export default function CategoryForm({ category }: CategoryFormProps) {
         const result = await createCategory({
           name: formData.name,
           slug: formData.slug,
+          parent_id: formData.parent_id === "none" ? null : formData.parent_id,
         })
 
         if (result.error) {
@@ -145,6 +150,35 @@ export default function CategoryForm({ category }: CategoryFormProps) {
                 URL&apos;de kullanılacak format. Türkçe karakterler otomatik dönüştürülür.
               </p>
             </div>
+
+            {/* Alt kategori sistemi aktif */}
+            {true && (
+              <div className="space-y-2">
+                <Label htmlFor="parent">Ana Kategori (İsteğe Bağlı)</Label>
+                <Select
+                  value={formData.parent_id}
+                  onValueChange={(value) => setFormData({ ...formData, parent_id: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Ana kategori seçin (boş bırakırsanız ana kategori olur)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Ana Kategori</SelectItem>
+                    {parentCategories
+                      .filter(cat => !cat.parent_id) // Sadece ana kategoriler
+                      .filter(cat => !isEditMode || cat.id !== category?.id) // Düzenleme modunda kendini seçmesin
+                      .map((parentCategory) => (
+                        <SelectItem key={parentCategory.id} value={parentCategory.id}>
+                          {parentCategory.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  Bu kategoriyi bir ana kategorinin alt kategorisi yapmak için seçin.
+                </p>
+              </div>
+            )}
 
             <div className="flex gap-4">
               <Button

@@ -18,6 +18,15 @@ export default async function AdminCategoriesPage() {
     console.error("Error fetching categories:", error)
   }
 
+  // Parent kategori bilgilerini hesapla
+  const categoriesWithParent = categories?.map(category => {
+    const parent = categories?.find(cat => cat.id === category.parent_id)
+    return {
+      ...category,
+      parent: parent ? { name: parent.name } : null
+    }
+  }) || []
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -41,26 +50,35 @@ export default async function AdminCategoriesPage() {
         <CardHeader>
           <CardTitle>Tüm Kategoriler</CardTitle>
           <CardDescription>
-            Toplam {categories?.length || 0} kategori listeleniyor
+            Toplam {categoriesWithParent?.length || 0} kategori listeleniyor
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {(categories && categories.length > 0) ? (
+          {(categoriesWithParent && categoriesWithParent.length > 0) ? (
             <div className="relative overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-xs uppercase bg-muted">
                   <tr>
                     <th className="px-6 py-3">Kategori Adı</th>
                     <th className="px-6 py-3">Slug</th>
+                    <th className="px-6 py-3">Ana Kategori</th>
                     <th className="px-6 py-3">Oluşturma Tarihi</th>
                     <th className="px-6 py-3 text-right">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {(categories ?? []).map((category) => (
+                  {(categoriesWithParent ?? []).map((category) => (
                     <tr key={category.id} className="border-b hover:bg-muted/50">
-                      <td className="px-6 py-4 font-medium">{category.name}</td>
+                      <td className="px-6 py-4 font-medium">
+                        {category.parent_id && (
+                          <span className="text-muted-foreground mr-2">└─</span>
+                        )}
+                        {category.name}
+                      </td>
                       <td className="px-6 py-4 text-muted-foreground">{category.slug}</td>
+                      <td className="px-6 py-4 text-muted-foreground">
+                        {category.parent ? category.parent.name : "Ana Kategori"}
+                      </td>
                       <td className="px-6 py-4 text-muted-foreground">
                         {new Date(category.created_at).toLocaleDateString("tr-TR")}
                       </td>

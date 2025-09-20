@@ -23,5 +23,10 @@ export default async function EditCategoryPage({ params }: EditCategoryPageProps
     notFound()
   }
 
-  return <CategoryForm category={category} />
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("*")
+    .order("name")
+
+  return <CategoryForm category={category} parentCategories={categories || []} />
 }
