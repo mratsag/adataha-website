@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation"
 import { createServerComponentClient } from "@/lib/supabase/server"
 import ProductGrid from "@/components/product/ProductGrid"
+import CategoryGrid from "@/components/category/CategoryGrid"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
@@ -57,6 +58,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound()
   }
 
+  // Alt kategorileri getir
+  const { data: subcategories } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("parent_id", category.id)
+    .order("name")
+
   // Kategoriye ait ürünleri getir
   const { data: products } = await supabase
     .from("products")
@@ -92,11 +100,24 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               {category.name}
             </h1>
             <p className="text-lg text-muted-foreground">
-              {products?.length || 0} ürün listeleniyor
+              {(products?.length || 0)} ürün listeleniyor
             </p>
           </div>
         </div>
       </section>
+
+      {/* Subcategories Section */}
+      {subcategories && subcategories.length > 0 && (
+        <section className="py-10 md:py-12 border-b bg-muted/20">
+          <div className="container mx-auto px-4">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold">Alt Kategoriler</h2>
+              <p className="text-muted-foreground text-sm mt-1">{category.name} altındaki alt gruplar</p>
+            </div>
+            <CategoryGrid categories={subcategories} />
+          </div>
+        </section>
+      )}
 
       {/* Products Section */}
       <section className="py-16 md:py-24">

@@ -46,10 +46,11 @@ export default function CategoryForm({ category, parentCategories = [] }: Catego
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.value
-    setFormData({
+    setFormData((prev) => ({
+      ...prev,
       name,
       slug: generateSlug(name),
-    })
+    }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
