@@ -22,6 +22,7 @@ export default async function HomePage() {
   const { data: categories, error } = await supabase
     .from("categories")
     .select("*")
+    .is("parent_id", null)
     .order("name")
 
   if (error) {
