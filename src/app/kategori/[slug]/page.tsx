@@ -65,11 +65,14 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     .eq("parent_id", category.id)
     .order("name")
 
-  // Kategoriye ait ürünleri getir
+  // Bu kategori + alt kategorilerin id'leri
+  const categoryIds = [category.id, ...(subcategories?.map((c) => c.id) || [])]
+
+  // Kategori ve alt kategorilere ait ürünleri getir
   const { data: products } = await supabase
     .from("products")
     .select("*")
-    .eq("category_id", category.id)
+    .in("category_id", categoryIds)
     .order("name")
 
   return (
