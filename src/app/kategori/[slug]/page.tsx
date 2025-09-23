@@ -9,6 +9,7 @@ import CategoryGrid from "@/components/category/CategoryGrid"
 import { ChevronRight } from "lucide-react"
 import Link from "next/link"
 import type { Metadata } from "next"
+import type { Product } from "@/types"
 
 interface CategoryPageProps {
   params: Promise<{
@@ -51,32 +52,69 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const supabase = await createServerComponentClient()
 
   // Kategoriyi getir
-  const { data: category } = await supabase
+  const { data: category, error: categoryError } = await supabase
     .from("categories")
     .select("*")
     .eq("slug", slug)
     .single()
+
+  if (categoryError) {
+    console.error("Category fetch error:", categoryError)
+  }
 
   if (!category) {
     notFound()
   }
 
   // Alt kategorileri getir
-  const { data: subcategories } = await supabase
+  const { data: subcategories, error: subError } = await supabase
     .from("categories")
     .select("*")
     .eq("parent_id", category.id)
     .order("name")
 
-  // Bu kategori + alt kategorilerin id'leri
-  const categoryIds = [category.id, ...(subcategories?.map((c) => c.id) || [])]
+  if (subError) {
+    console.error("Subcategories fetch error:", subError)
+  }
+
+  const subIds = (subcategories || []).map((c) => c.id)
+  const categoryIds = [category.id, ...subIds]
 
   // Kategori ve alt kategorilere ait ürünleri getir
-  const { data: products } = await supabase
-    .from("products")
-    .select("*")
-    .in("category_id", categoryIds)
-    .order("name")
+  let products: Product[] = []
+  try {
+    if (categoryIds.length > 1) {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .in("category_id", categoryIds)
+        .order("name")
+      if (error) {
+        console.error("Products fetch error (IN):", error)
+      }
+      products = (data as Product[]) || []
+    } else {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("category_id", category.id)
+        .order("name")
+      if (error) {
+        console.error("Products fetch error (EQ):", error)
+      }
+      products = (data as Product[]) || []
+    }
+  } catch (e) {
+    console.error("Products fetch unexpected error:", e)
+  }
+
+  console.log("Category page debug:", {
+    slug,
+    categoryId: category.id,
+    subCount: subcategories?.length || 0,
+    subIds,
+    productCount: products.length,
+  })
 
   return (
     <>
