@@ -1,4 +1,7 @@
 // src/app/(public)/kategori/[slug]/page.tsx
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 import { notFound } from "next/navigation"
 import { createServerComponentClient } from "@/lib/supabase/server"
 import ProductGrid from "@/components/product/ProductGrid"
