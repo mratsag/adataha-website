@@ -151,7 +151,7 @@ export default function AboutPage() {
           </p>
           <a
             href="/iletisim"
-            className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-primary rounded-full hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
+            className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-primary-foreground bg-primary rounded-full hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
           >
             İletişime Geç
           </a>

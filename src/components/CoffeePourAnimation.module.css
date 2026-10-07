@@ -1,0 +1,39 @@
+.scene { width: 100%; max-width: 600px; margin-inline: auto; }
+.pouch { transform-box: view-box; transform-origin: 385px 235px; animation: tilt 12s cubic-bezier(.45,0,.25,1) infinite; }
+.beans { animation: release 12s linear infinite; }
+.bean { transform-box: view-box; transform-origin: 385px 237px; animation: fall .9s cubic-bezier(.3,.1,.7,1) infinite; }
+.level { transform-box: view-box; animation: fillCup 12s ease-in-out infinite; }
+.steamOne, .steamTwo, .steamThree { opacity: 0; animation: steam 5s ease-in-out infinite; }
+.steamTwo { animation-delay: 1.5s; }
+.steamThree { animation-delay: 3s; }
+@keyframes tilt {
+  0%, 9%, 94%, 100% { transform: translateX(-115px) rotate(0deg); }
+  23%, 60% { transform: translateX(0) rotate(65deg); }
+  75%, 83% { transform: translateX(-115px) rotate(0deg); }
+}
+@keyframes release {
+  0%, 24%, 61%, 100% { opacity: 0; }
+  26%, 58% { opacity: 1; }
+}
+@keyframes fall {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+  8%, 80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--drift), 216px) rotate(var(--spin)); }
+}
+@keyframes fillCup {
+  0%, 24%, 100% { transform: translateY(70px); }
+  64%, 76% { transform: translateY(0); }
+}
+@keyframes steam {
+  0%, 100% { opacity: 0; transform: translate(0, 12px) scaleX(.9); }
+  35% { opacity: .12; }
+  65% { opacity: .2; transform: translate(6px, -14px) scaleX(1.05); }
+  95% { opacity: 0; transform: translate(-4px, -40px) scaleX(1.2); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene * { animation: none !important; }
+  .pouch { transform: translateX(-115px); }
+  .level { transform: none; }
+  .beans { opacity: 0; }
+  .steamOne, .steamTwo, .steamThree { opacity: .12; }
+}

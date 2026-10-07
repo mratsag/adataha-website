@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import { Lock, User } from "lucide-react"
+import BrandLogo from "@/components/BrandLogo"
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -89,9 +90,7 @@ export default function AdminLoginPage() {
       <Card className="w-full max-w-md relative">
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Lock className="h-8 w-8 text-primary" />
-            </div>
+            <BrandLogo className="h-20" priority />
           </div>
           <CardTitle className="text-2xl text-center">Admin Girişi</CardTitle>
           <CardDescription className="text-center">

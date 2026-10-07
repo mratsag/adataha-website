@@ -1,74 +1,55 @@
-// src/components/category/CategoryCard.tsx
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
-import { cn } from "@/lib/utils"
+import Image from "next/image"
+import { ArrowUpRight, Coffee, CupSoda, Milk, Snowflake, Utensils, Droplets, Leaf, Sparkles, type LucideIcon } from "lucide-react"
 import type { Category } from "@/types"
+import { cn } from "@/lib/utils"
 
 interface CategoryCardProps {
   category: Category
-  index: number
+  image?: string
+  compact?: boolean
 }
 
-// Kategori ikonları/renkleri
-const categoryStyles: Record<string, { gradient: string; icon: string }> = {
-  suruplar: { gradient: "from-pink-500 to-rose-500", icon: "🍹" },
-  pureler: { gradient: "from-orange-500 to-amber-500", icon: "🥤" },
-  "bar-soslar": { gradient: "from-purple-500 to-indigo-500", icon: "🍸" },
-  "dekor-soslar": { gradient: "from-blue-500 to-cyan-500", icon: "🎨" },
-  kahveler: { gradient: "from-amber-600 to-orange-600", icon: "☕" },
-  "toz-gruplari": { gradient: "from-emerald-500 to-green-500", icon: "✨" },
-  "cay-grubu": { gradient: "from-green-600 to-emerald-600", icon: "🍵" },
-  "icecek-grubu": { gradient: "from-cyan-500 to-blue-500", icon: "🥛" },
-  boboco: { gradient: "from-indigo-500 to-purple-500", icon: "🧋" },
-  "donuk-urun-grubu": { gradient: "from-slate-500 to-gray-500", icon: "🧊" },
-  "cafe-cihazlari": { gradient: "from-gray-600 to-slate-600", icon: "⚙️" },
+const categoryDetails: Record<string, { icon: LucideIcon; description: string }> = {
+  suruplar: { icon: Droplets, description: "Kahve ve kokteyl tariflerinize eşlik eden aromalar." },
+  pureler: { icon: CupSoda, description: "Meyveli içecekler ve özgün tarifler için püreler." },
+  "bar-soslar": { icon: Milk, description: "Kahve sunumlarını tamamlayan çikolata ve karamel lezzetleri." },
+  "dekor-soslar": { icon: Sparkles, description: "Tatlı ve içeceklerinize son dokunuş." },
+  kahveler: { icon: Coffee, description: "Espressodan filtre kahveye, fincanınız için farklı harmanlar." },
+  "toz-gruplari": { icon: Milk, description: "Sıcak ve soğuk içecek menünüz için pratik karışımlar." },
+  "cay-grubu": { icon: Leaf, description: "Günün her anına eşlik eden çay çeşitleri." },
+  "icecek-grubu": { icon: CupSoda, description: "İçecek menünüzü tamamlayacak ürünleri keşfedin." },
+  bobaco: { icon: CupSoda, description: "Popping boba, çay bazları ve renkli bubble tea lezzetleri." },
+  "donuk-urun-grubu": { icon: Snowflake, description: "Cheesecake, pasta ve tatlılarla sunumunuzu tamamlayın." },
+  "cafe-cihazlari": { icon: Utensils, description: "Hazırlıktan servise, işletmenizin ihtiyaç duyduğu ekipmanlar." },
 }
 
-export default function CategoryCard({ category }: CategoryCardProps) {
-  const style = categoryStyles[category.slug] || {
-    gradient: "from-primary to-primary/70",
-    icon: "📦",
-  }
+const compactTitles: Record<string, string> = {
+  "cafe-cihazlari": "Cafe Ekipmanları",
+  "donuk-urun-grubu": "Donuk Ürünler",
+  "toz-gruplari": "Toz İçecekler",
+  "cay-grubu": "Çaylar",
+  "icecek-grubu": "İçecekler",
+}
 
+export default function CategoryCard({ category, image, compact = false }: CategoryCardProps) {
+  const details = categoryDetails[category.slug]
+  const Icon = details?.icon ?? Utensils
   return (
-    <Link
-      href={`/kategori/${category.slug}`}
-      className={cn(
-        "group relative overflow-hidden rounded-2xl bg-card border shadow-sm",
-        "hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-      )}
-    >
-      {/* Background Gradient */}
-      <div
-        className={cn(
-          "absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300",
-          `bg-gradient-to-br ${style.gradient}`
+    <Link href={`/kategori/${category.slug}`} aria-label={compact ? `${category.name} ürünlerini keşfet` : undefined} className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-border bg-card transition-[border-color,box-shadow] duration-200 hover:border-brand-caramel/50 hover:shadow-[0_16px_36px_-24px_rgba(61,42,36,0.22)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-caramel motion-reduce:transition-none">
+      <div className={cn("relative flex items-center justify-center overflow-hidden border-b border-border/60 bg-[#FAFAF9] dark:bg-secondary/30", compact ? "aspect-[16/10]" : "aspect-[3/2]")}>
+        {image ? (
+          <Image src={image} alt="" fill sizes={compact ? "(max-width: 767px) 45vw, (max-width: 1023px) 30vw, 310px" : "(max-width: 639px) 90vw, (max-width: 1023px) 45vw, 400px"} className={cn("object-contain transition-transform duration-500 group-hover:scale-[1.035] motion-reduce:transform-none motion-reduce:transition-none", compact ? "bg-[#faf9f7]" : "p-6")} />
+        ) : (
+          <Icon aria-hidden="true" className="h-16 w-16 stroke-[1] text-brand-caramel/70" />
         )}
-      />
-
-      {/* Content */}
-      <div className="relative p-6 md:p-8">
-        {/* Icon */}
-        <div className="mb-4 text-5xl">{style.icon}</div>
-
-        {/* Title */}
-        <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-          {category.name}
-        </h3>
-
-        {/* Arrow */}
-        <div className="inline-flex items-center text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">
-          <span>Ürünleri Gör</span>
-          <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-        </div>
-
-        {/* Decorative Element */}
-        <div
-          className={cn(
-            "absolute -bottom-12 -right-12 w-32 h-32 rounded-full opacity-10",
-            `bg-gradient-to-br ${style.gradient}`
-          )}
-        />
+      </div>
+      <div className={cn("flex flex-1 flex-col items-start", compact ? "gap-3 p-3.5 md:p-4" : "p-6 md:p-7")}>
+        <h3 className={cn("font-medium leading-tight tracking-[-0.035em]", compact ? "text-base md:text-lg" : "text-2xl")}>{compact ? compactTitles[category.slug] ?? category.name : category.name}</h3>
+        {!compact && <p className="mb-7 mt-3 text-sm leading-7 text-muted-foreground">{details?.description ?? "İşletmeniz için ürün seçeneklerini inceleyin."}</p>}
+        <span className={cn("mt-auto inline-flex items-center gap-3 text-primary", compact ? "text-[10px] font-medium md:text-xs" : "text-xs font-semibold")}>
+          Ürünleri keşfet <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none" />
+        </span>
       </div>
     </Link>
   )

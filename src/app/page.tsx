@@ -3,8 +3,14 @@ import { createServerComponentClient } from "@/lib/supabase/server"
 import CategoryGrid from "@/components/category/CategoryGrid"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
-import { Sparkles } from "lucide-react"
+import { ArrowRight } from "lucide-react"
+import Link from "next/link"
+import CoffeePourAnimation from "@/components/CoffeePourAnimation"
+import BrandLogoStrip from "@/components/BrandLogoStrip"
 import { Metadata } from "next"
+import Image from "next/image"
+import { categoryImagesBySlug } from "@/lib/category-images"
+import HomeHighlights from "@/components/HomeHighlights"
 
 export const metadata: Metadata = {
   title: "Ana Sayfa",
@@ -28,6 +34,11 @@ export default async function HomePage() {
   if (error) {
     console.error("Error fetching categories:", error)
   }
+
+  const productResult = await supabase.from("products").select("id", { count: "exact", head: true })
+  const categoryImages: Record<string, string> = Object.fromEntries(
+    (categories ?? []).flatMap(category => categoryImagesBySlug[category.slug] ? [[category.id, categoryImagesBySlug[category.slug]]] : [])
+  )
 
   const organizationSchema = {
     "@context": "https://schema.org",
@@ -81,75 +92,54 @@ export default async function HomePage() {
         }}
       />
 
-      <Header />
+      <Header categories={categories ?? []} />
       <main className="min-h-screen pt-16 md:pt-20">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-transparent to-primary/5">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
-          
-          {/* Floating Elements */}
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-pulse delay-1000" />
-
-          <div className="container mx-auto px-4 py-20 md:py-32 relative">
-            <div className="text-center max-w-4xl mx-auto">
-              {/* Badge */}
-              <div className="inline-flex items-center space-x-2 bg-primary/10 text-primary rounded-full px-4 py-2 mb-6">
-                <Sparkles className="h-4 w-4" />
-                <span className="text-sm font-medium">Profesyonel Cafe & Restaurant Ürünleri</span>
-              </div>
-
-              {/* Title */}
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                Kalite ve Lezzet Bir Arada
-              </h1>
-
-              {/* Description */}
-              <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-                Cafe ve restaurantınız için ihtiyacınız olan tüm ürünler. 
-                Şuruplardan kahvelere, pürelerden bar soslara kadar geniş ürün yelpazemizle hizmetinizdeyiz.
+        <section className="overflow-hidden border-b border-border/40 bg-white dark:bg-background">
+          <div className="site-container grid items-center gap-8 py-10 md:py-12 lg:min-h-[620px] lg:grid-cols-2 lg:content-start lg:gap-10 lg:pb-10 lg:pt-8">
+            <div className="relative z-10">
+              <p className="mb-6 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.18em] text-brand-caramel">
+                <span className="h-px w-8 bg-brand-caramel" /> Profesyonel cafe & restaurant ürünleri
               </p>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">11+</div>
-                  <div className="text-sm text-muted-foreground">Kategori</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">500+</div>
-                  <div className="text-sm text-muted-foreground">Ürün</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">100+</div>
-                  <div className="text-sm text-muted-foreground">Mutlu Müşteri</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-primary mb-1">5+</div>
-                  <div className="text-sm text-muted-foreground">Yıllık Tecrübe</div>
-                </div>
+              <h1 className="max-w-xl text-5xl font-semibold leading-[1.08] tracking-[-0.045em] md:text-6xl xl:text-7xl">
+                Kalite ve lezzet,<br /><span className="font-serif font-normal italic text-brand-caramel">aynı fincanda.</span>
+              </h1>
+              <p className="mt-6 max-w-md text-base leading-7 text-muted-foreground md:text-lg">
+                Kahveden şuruba, ilk yudumdan son dokunuşa. Cafe ve restaurantınız için ihtiyacınız olan lezzetler Adataha’da.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-4">
+                <Link href="/kategori/kahveler" className="inline-flex items-center gap-5 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+                  Kahveleri keşfet <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/#kategoriler" className="px-2 py-3 text-sm font-medium underline decoration-border underline-offset-8 transition-colors hover:text-brand-caramel">Tüm ürün grupları</Link>
+              </div>
+              <div className="mt-10 flex max-w-md flex-wrap gap-x-8 gap-y-4 border-t border-border/60 pt-6">
+                <div><span className="text-xl font-semibold">11+</span><span className="ml-2 text-xs text-muted-foreground">Kategori</span></div>
+                {productResult.count !== null && <div><span className="text-xl font-semibold">{productResult.count}</span><span className="ml-2 text-xs text-muted-foreground">Ürün</span></div>}
+                <div><span className="text-xl font-semibold">5+</span><span className="ml-2 text-xs text-muted-foreground">Yıllık tecrübe</span></div>
               </div>
             </div>
+            <CoffeePourAnimation />
           </div>
+          <BrandLogoStrip />
         </section>
 
         {/* Categories Section */}
-        <section className="py-20 md:py-32">
-          <div className="container mx-auto px-4">
+        <section id="kategoriler" className="scroll-mt-20 bg-background py-14 md:py-20">
+          <div className="site-container">
             {/* Section Header */}
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Ürün Kategorilerimiz
+            <div className="mb-8 flex flex-col justify-between gap-5 md:mb-10 md:flex-row md:items-end md:gap-10">
+              <h2 className="max-w-2xl text-4xl font-medium leading-[1.16] tracking-[-0.05em] lg:text-[54px]">
+                Menünüz için her şey,<br /><em className="font-serif font-normal text-brand-caramel">bir arada.</em>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="max-w-xs text-sm leading-7 text-muted-foreground">
                 İşletmenizin ihtiyaçlarına özel, geniş ürün yelpazemizle tanışın
               </p>
             </div>
 
             {/* Category Grid */}
             {categories && categories.length > 0 ? (
-              <CategoryGrid categories={categories} />
+              <CategoryGrid categories={categories} images={categoryImages} compact />
             ) : (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">Henüz kategori bulunmuyor.</p>
@@ -158,21 +148,25 @@ export default async function HomePage() {
           </div>
         </section>
 
+        <HomeHighlights />
+
         {/* CTA Section */}
-        <section className="py-20 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Hemen Başlayın
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              İşletmeniz için en uygun ürünleri keşfedin. Kaliteli ürünlerimizle müşterilerinize unutulmaz lezzetler sunun.
-            </p>
-            <a
-              href="/iletisim"
-              className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-white bg-primary rounded-full hover:bg-primary/90 transition-colors shadow-lg hover:shadow-xl"
-            >
-              Bizimle İletişime Geçin
-            </a>
+        <section className="overflow-hidden border-t border-border bg-background">
+          <div className="site-container grid items-center gap-8 py-16 md:grid-cols-[1.2fr_1fr] md:gap-16 md:py-20">
+            <div>
+              <h2 className="text-[44px] font-medium leading-[1.12] tracking-[-0.05em] lg:text-[64px]">
+                Birlikte güzel<br /><em className="font-serif font-normal text-brand-caramel">bir başlangıç.</em>
+              </h2>
+              <p className="mb-8 mt-6 max-w-md text-sm leading-8 text-muted-foreground">
+                İşletmeniz için en uygun ürünleri birlikte seçelim. Kahve, içecek ve tatlı menünüz için bize ulaşın.
+              </p>
+              <Link href="/iletisim" className="inline-flex items-center gap-5 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+                Bizimle iletişime geçin <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="relative mx-auto aspect-square w-full max-w-[360px] md:max-w-[460px]">
+              <Image src="/images/cawa-portfolio.webp" alt="CAWA kahve paketi, DaVinci Gourmet şurup ve Caffe Nonno kahvesiyle hazırlanan ürün kompozisyonu" fill sizes="(max-width: 767px) 360px, 460px" className="object-contain" />
+            </div>
           </div>
         </section>
 

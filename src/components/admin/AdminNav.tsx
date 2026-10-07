@@ -2,6 +2,7 @@
 "use client"
 
 import Link from "next/link"
+import BrandLogo from "@/components/BrandLogo"
 import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -61,8 +62,9 @@ export default function AdminNav() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-8">
-            <Link href="/admin" className="font-bold text-xl">
-              Adataha Admin
+            <Link href="/admin" className="flex items-center gap-2 font-medium">
+              <BrandLogo className="h-12" />
+              <span className="text-sm text-muted-foreground">Admin</span>
             </Link>
 
             {/* Desktop Navigation */}

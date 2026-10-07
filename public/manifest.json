@@ -4,8 +4,8 @@
   "description": "Türkiye'nin önde gelen cafe ve restaurant ürünleri tedarikçisi",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#F7F0E5",
+  "theme_color": "#3D2A24",
   "icons": [
     {
       "src": "/favicon.ico",

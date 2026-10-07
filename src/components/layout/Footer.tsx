@@ -1,42 +1,32 @@
 // src/components/layout/Footer.tsx
 import Link from "next/link"
-import { Mail, Phone, MapPin, Facebook, Instagram, Twitter } from "lucide-react"
+import BrandLogo from "@/components/BrandLogo"
+import { Mail, Phone, MapPin, Instagram } from "lucide-react"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-muted/30 border-t">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="border-t border-border bg-background">
+      <div className="site-container pb-6 pt-10 md:pt-12">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr] lg:gap-10 [&_h4]:text-xs [&_h4]:font-semibold [&_li]:text-xs [&_li_a]:text-xs">
           {/* Company Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Adataha
-            </h3>
-            <p className="text-sm text-muted-foreground">
+          <div className="col-span-2 space-y-4 lg:col-span-1">
+            <Link href="/" className="inline-flex">
+              <BrandLogo />
+            </Link>
+            <p className="max-w-[230px] text-xs leading-6 text-muted-foreground">
               Cafe ve restaurantlar için kaliteli ürünler sunan güvenilir partneriniz.
             </p>
             <div className="flex space-x-3">
               <Link
-                href="#"
-                className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors group"
-              >
-                <Facebook className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-              </Link>
-              <Link
                 href="https://www.instagram.com/adatahagidakahve"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors group"
+                aria-label="Adataha Instagram"
+                className="group flex h-8 w-8 items-center justify-center rounded-full border border-border transition-colors hover:border-brand-caramel"
               >
                 <Instagram className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-              </Link>
-              <Link
-                href="#"
-                className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors group"
-              >
-                <Twitter className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
               </Link>
             </div>
           </div>
@@ -120,18 +110,18 @@ export default function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-4">
+          <div className="col-span-2 space-y-4 lg:col-span-1">
             <h4 className="font-semibold">İletişim</h4>
             <ul className="space-y-3">
               <li className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-muted-foreground">
+                <span className="text-xs text-muted-foreground">
                   Sakarya, Türkiye
                 </span>
               </li>
               <li className="flex items-start space-x-3">
                 <Phone className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                <div className="text-sm text-muted-foreground space-y-1">
+                <div className="space-y-1 text-xs text-muted-foreground">
                   <div>
                     <a
                       href="tel:+902765466264"
@@ -153,8 +143,8 @@ export default function Footer() {
               <li className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-muted-foreground flex-shrink-0" />
                 <a
-                  href="mailto:info@adataha.com"
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  href="mailto:adatahagida@hotmail.com"
+                  className="break-all text-xs text-muted-foreground hover:text-primary transition-colors"
                 >
                   adatahagida@hotmail.com
                 </a>
@@ -163,8 +153,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t text-center">
-          <p className="text-sm text-muted-foreground">
+        <div className="mt-10 border-t border-border/60 pt-5">
+          <p className="text-[10px] text-muted-foreground">
             © {currentYear} Adataha. Tüm hakları saklıdır.
           </p>
         </div>
