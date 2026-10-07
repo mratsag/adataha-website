@@ -84,7 +84,23 @@ export default function MessagesClient() {
   }
 
   useEffect(() => {
-    fetchMessages()
+    const controller = new AbortController()
+    fetch("/api/contact", { signal: controller.signal })
+      .then(async response => {
+        const result = await response.json()
+        if (controller.signal.aborted) return
+        if (response.ok) setMessages(result.data || [])
+        else toast.error("Mesajlar yüklenirken hata oluştu")
+      })
+      .catch(error => {
+        if (controller.signal.aborted) return
+        console.error("Mesaj yükleme hatası:", error)
+        toast.error("Mesajlar yüklenirken hata oluştu")
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
   }, [])
 
   if (loading) {

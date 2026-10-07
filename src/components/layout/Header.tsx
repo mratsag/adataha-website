@@ -50,11 +50,17 @@ export default function Header({ categories: initialCategories }: { categories?:
     setIsMobileMenuOpen(false)
   }
 
+  const toggleCategories = () => {
+    if (!isCategoriesOpen && !initialCategories) {
+      setIsLoading(true)
+      setLoadError(false)
+    }
+    setIsCategoriesOpen(open => !open)
+  }
+
   useEffect(() => {
     if (initialCategories || !isCategoriesOpen) return
     let active = true
-    setIsLoading(true)
-    setLoadError(false)
     const load = async () => {
       try {
         const { data, error } = await createClient().from("categories")
@@ -108,7 +114,7 @@ export default function Header({ categories: initialCategories }: { categories?:
     <>
       {isLoading && <p role="status" className="p-6 text-sm text-muted-foreground">Kategoriler yükleniyor…</p>}
       {loadError && <div role="status" className="p-6 text-sm text-muted-foreground">
-        Kategoriler yüklenemedi. <button type="button" onClick={() => setReloadCount(count => count + 1)} className="underline text-foreground">Tekrar dene</button>
+        Kategoriler yüklenemedi. <button type="button" onClick={() => { setIsLoading(true); setLoadError(false); setReloadCount(count => count + 1) }} className="underline text-foreground">Tekrar dene</button>
       </div>}
       {!isLoading && !loadError && categories.length === 0 && <p className="p-6 text-sm text-muted-foreground">Henüz kategori bulunmuyor.</p>}
       {!isLoading && !loadError && categories.length > 0 && <div className="grid gap-7 p-5 md:grid-cols-3 md:gap-6 md:p-8">
@@ -143,7 +149,7 @@ export default function Header({ categories: initialCategories }: { categories?:
           <nav aria-label="Ana menü" className="hidden items-center gap-2 md:flex lg:gap-4">
             <Link href="/" onClick={closeMenus} className={linkClass}>Ana Sayfa</Link>
             <button ref={desktopTriggerRef} type="button" aria-expanded={isCategoriesOpen} aria-controls="desktop-categories"
-              onClick={() => setIsCategoriesOpen(open => !open)}
+              onClick={toggleCategories}
               className={cn(linkClass, "flex items-center gap-2", isCategoriesOpen && "bg-secondary/40 text-brand-caramel")}>
               Kategoriler<ChevronDown className={cn("h-4 w-4 transition-transform", isCategoriesOpen && "rotate-180")} />
             </button>
@@ -182,7 +188,7 @@ export default function Header({ categories: initialCategories }: { categories?:
       <nav id="mobile-navigation" aria-label="Mobil menü" hidden={!isMobileMenuOpen} className={cn("max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-border px-4 py-3 md:hidden", !isMobileMenuOpen && "hidden")}>
         <Link href="/" onClick={closeMenus} className={cn(linkClass, "block")}>Ana Sayfa</Link>
         <button ref={mobileTriggerRef} type="button" aria-expanded={isCategoriesOpen} aria-controls="mobile-categories"
-          onClick={() => setIsCategoriesOpen(open => !open)} className={cn(linkClass, "flex w-full items-center justify-between")}>
+          onClick={toggleCategories} className={cn(linkClass, "flex w-full items-center justify-between")}>
           Kategoriler<ChevronDown className={cn("h-4 w-4 transition-transform", isCategoriesOpen && "rotate-180")} />
         </button>
         <div id="mobile-categories" hidden={!isCategoriesOpen} className={cn("my-2 rounded-xl border border-border bg-white dark:bg-card", !isCategoriesOpen && "hidden")}>{categoryContent}</div>

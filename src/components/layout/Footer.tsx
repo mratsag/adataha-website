@@ -1,7 +1,7 @@
 // src/components/layout/Footer.tsx
 import Link from "next/link"
 import BrandLogo from "@/components/BrandLogo"
-import { Mail, Phone, MapPin, Instagram } from "lucide-react"
+import { Mail, Phone, MapPin } from "lucide-react"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -26,7 +26,11 @@ export default function Footer() {
                 aria-label="Adataha Instagram"
                 className="group flex h-8 w-8 items-center justify-center rounded-full border border-border transition-colors hover:border-brand-caramel"
               >
-                <Instagram className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors">
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="18" cy="6" r="1" fill="currentColor" stroke="none" />
+                </svg>
               </Link>
             </div>
           </div>
