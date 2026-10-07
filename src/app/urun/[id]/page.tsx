@@ -3,8 +3,10 @@ import { notFound } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { createServerComponentClient } from "@/lib/supabase/server"
-import { ChevronRight, Package, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ChevronRight, Package, ArrowLeft, ArrowRight, MessageCircle } from "lucide-react"
+import Header from "@/components/layout/Header"
+import Footer from "@/components/layout/Footer"
+import ProductGrid from "@/components/product/ProductGrid"
 import type { Metadata } from "next"
 
 interface ProductPageProps {
@@ -106,6 +108,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     }
   }
 
+  const categoryHref = product.category?.slug ? `/kategori/${product.category.slug}` : "/#kategoriler"
+  const whatsappHref = `https://wa.me/905325659667?text=${encodeURIComponent(`Merhaba, ${product.name} ürünü hakkında bilgi almak istiyorum.`)}`
+
   return (
     <>
       {/* JSON-LD Structured Data */}
@@ -115,26 +120,28 @@ export default async function ProductPage({ params }: ProductPageProps) {
           __html: JSON.stringify(productSchema)
         }}
       />
+      <Header />
+      <main className="min-h-screen bg-background pt-16 md:pt-20">
       
         {/* Breadcrumb */}
-      <section className="bg-muted/30 border-b">
-        <div className="container mx-auto px-4 py-4">
-          <nav className="flex items-center space-x-2 text-sm">
+      <section className="bg-background">
+        <div className="site-container pb-2 pt-7">
+          <nav aria-label="Sayfa yolu" className="flex flex-wrap items-center gap-2 text-xs">
             <Link
               href="/"
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               Ana Sayfa
             </Link>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            <ChevronRight aria-hidden="true" className="h-3 w-3 shrink-0 text-muted-foreground" />
             <Link
-              href={`/kategori/${product.category?.slug}`}
+              href={categoryHref}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
-              {product.category?.name}
+              {product.category?.name || "Ürün grupları"}
             </Link>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
-            <span className="text-foreground font-medium line-clamp-1">
+            <ChevronRight aria-hidden="true" className="h-3 w-3 shrink-0 text-muted-foreground" />
+            <span aria-current="page" className="break-words font-medium text-foreground">
               {product.name}
             </span>
           </nav>
@@ -142,25 +149,25 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </section>
 
       {/* Product Detail */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <section className="pb-14 pt-7 md:pb-20 md:pt-10">
+        <div className="site-container">
+          <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-16">
             {/* Image Section */}
-            <div className="relative">
-              <div className="sticky top-24">
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-muted">
+            <div className="min-w-0 lg:sticky lg:top-28">
+              <div>
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[24px] border border-border bg-white lg:aspect-square">
                   {product.image_url ? (
                     <Image
                       src={product.image_url}
                       alt={product.name}
                       fill
-                      className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-contain p-6 md:p-10"
+                      sizes="(max-width: 1023px) 100vw, 640px"
                       priority
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Package className="h-32 w-32 text-muted-foreground/20" />
+                      <Package aria-hidden="true" className="h-16 w-16 text-muted-foreground/30" strokeWidth={1.5} />
                     </div>
                   )}
                 </div>
@@ -168,93 +175,71 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div>
 
             {/* Content Section */}
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-7 lg:py-3">
               {/* Back Button */}
               <Link
-                href={`/kategori/${product.category?.slug}`}
-                className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+                href={categoryHref}
+                className="inline-flex items-center text-xs text-muted-foreground transition-colors hover:text-brand-caramel"
               >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {product.category?.name} kategorisine dön
+                <ArrowLeft aria-hidden="true" className="mr-2 h-3 w-3" />
+                {product.category?.name ? `${product.category.name} kategorisine dön` : "Ürün gruplarına dön"}
               </Link>
 
               {/* Title */}
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold mb-2">
+                <p className="mb-4 text-xs uppercase tracking-[0.18em] text-brand-caramel">Menünüz için seçtiklerimiz</p>
+                <h1 className="mb-5 break-words text-3xl font-medium leading-[1.15] tracking-[-0.045em] md:text-4xl xl:text-5xl">
                   {product.name}
                 </h1>
                 <div className="flex items-center space-x-2">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                    {product.category?.name}
-                  </span>
+                  {product.category?.name && <Link href={categoryHref} className="inline-flex items-center rounded-full border border-border px-3 py-1.5 text-xs text-muted-foreground hover:text-brand-caramel">
+                    {product.category.name}
+                  </Link>}
                 </div>
               </div>
 
               {/* Description */}
               {product.description && (
-                <div className="prose prose-gray max-w-none">
-                  <h3 className="text-lg font-semibold mb-3">Ürün Açıklaması</h3>
-                  <p className="text-muted-foreground whitespace-pre-wrap">
+                <div className="border-t border-border pt-6">
+                  <h2 className="mb-3 text-base font-medium">Ürün hakkında</h2>
+                  <p className="whitespace-pre-wrap break-words text-sm leading-8 text-muted-foreground">
                     {product.description}
                   </p>
                 </div>
               )}
 
               {/* CTA */}
-              <div className="pt-6 border-t">
-                <h3 className="text-lg font-semibold mb-3">
-                  Bu ürünle ilgileniyor musunuz?
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  Detaylı bilgi ve sipariş için bizimle iletişime geçin.
+              <div className="rounded-2xl border border-border p-5 md:p-6">
+                <h2 className="mb-3 text-2xl font-medium tracking-tight">
+                  Birlikte <em className="font-serif font-normal text-brand-caramel">konuşalım.</em>
+                </h2>
+                <p className="mb-5 text-sm leading-7 text-muted-foreground">
+                  Bu ürünün güncel fiyatı, stok durumu ve sipariş detayları için bize ulaşın.
                 </p>
-                <Link href="/iletisim">
-                  <Button size="lg" className="w-full sm:w-auto">
-                    İletişime Geç
-                  </Button>
+                <div className="flex flex-wrap items-center gap-4">
+                <Link href="/iletisim" className="inline-flex items-center gap-4 rounded-full bg-primary px-5 py-3.5 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                  İletişime geçin <ArrowRight aria-hidden="true" className="h-4 w-4" />
                 </Link>
+                <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 py-3 text-sm font-medium hover:text-brand-caramel"><MessageCircle aria-hidden="true" className="h-4 w-4" /> WhatsApp’tan sorun</a>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Related Products */}
           {relatedProducts && relatedProducts.length > 0 && (
-            <div className="mt-24 pt-12 border-t">
-              <h2 className="text-2xl font-bold mb-8">İlgili Ürünler</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {relatedProducts.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={`/urun/${item.id}`}
-                    className="group relative overflow-hidden rounded-lg bg-card border shadow-sm hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="relative aspect-square overflow-hidden bg-muted">
-                      {item.image_url ? (
-                        <Image
-                          src={item.image_url}
-                          alt={item.name}
-                          fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
-                          sizes="(max-width: 768px) 100vw, 25vw"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Package className="h-12 w-12 text-muted-foreground/20" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-semibold group-hover:text-primary transition-colors line-clamp-1">
-                        {item.name}
-                      </h3>
-                    </div>
-                  </Link>
-                ))}
+            <div className="mt-12 border-t border-border pt-10 md:mt-16 md:pt-12">
+              <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+                <h2 className="text-3xl font-medium tracking-[-0.04em]">Menünüzü <em className="font-serif font-normal text-brand-caramel">tamamlayın.</em></h2>
+                <Link href={categoryHref} className="inline-flex items-center gap-2 py-2 text-xs font-medium hover:text-brand-caramel">Kategorideki tüm ürünler <ArrowRight aria-hidden="true" className="h-3 w-3" /></Link>
               </div>
+              <ProductGrid products={relatedProducts} />
             </div>
           )}
         </div>
       </section>
+      </main>
+      <Footer />
     </>
   )
 }

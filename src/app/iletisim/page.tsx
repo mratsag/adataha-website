@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import { Mail, Phone, MapPin, Clock, Send } from "lucide-react"
+import { Mail, Phone, MapPin, Clock, ArrowRight, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -95,37 +95,39 @@ export default function ContactPage() {
       <Header />
       <main className="min-h-screen pt-16 md:pt-20">
         {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-transparent to-primary/5 py-16 md:py-24">
-        <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
+      <section className="bg-background pb-10 pt-12 md:pb-12 md:pt-16">
         
-        <div className="container mx-auto px-4 relative">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              İletişime Geçin
+        <div className="site-container">
+          <p className="mb-5 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.18em] text-brand-caramel"><span className="h-px w-8 bg-brand-caramel" /> İletişim</p>
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end md:gap-12">
+            <h1 className="text-5xl font-medium leading-[1.08] tracking-[-0.045em] lg:text-[68px]">
+              Birlikte güzel<br /><em className="font-serif font-normal text-brand-caramel">bir başlangıç.</em>
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Sorularınız için bize ulaşın, size yardımcı olmaktan mutluluk duyarız
+            <p className="max-w-sm text-sm leading-7 text-muted-foreground">
+              İşletmenizi, menünüzü ve aradığınız ürünleri bize anlatın. İhtiyacınıza uygun seçenekleri birlikte değerlendirelim.
             </p>
           </div>
         </div>
       </section>
 
       {/* Contact Section */}
-      <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-3 gap-12">
+      <section aria-label="Bize ulaşın" className="bg-background pb-16 md:pb-24">
+        <div className="site-container">
+          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
             {/* Contact Form */}
-            <div className="lg:col-span-2">
-              <div className="bg-card rounded-2xl border p-8 md:p-10">
-                <h2 className="text-2xl font-bold mb-6">Mesaj Gönderin</h2>
+            <div className="min-w-0 lg:order-2">
+              <div className="rounded-[24px] border border-border bg-card p-5 sm:p-8 md:p-10">
+                <h2 className="mb-2 text-2xl font-medium tracking-tight">Sizi dinliyoruz.</h2>
+                <p className="mb-7 text-sm leading-6 text-muted-foreground">Sorularınızı ve ürün taleplerinizi aşağıdaki formdan iletin.</p>
                 
-                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-6">
+                <form ref={formRef} onSubmit={handleSubmit} aria-busy={isSubmitting} className="space-y-5 [&_input]:h-12 [&_input]:rounded-xl [&_input]:shadow-none [&_label]:text-xs [&_label]:font-medium">
+                  <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-2">
                       <Label htmlFor="name">Adınız Soyadınız *</Label>
                       <Input
                         id="name"
                         name="name"
+                        autoComplete="name"
                         required
                         placeholder="Adınızı girin"
                       />
@@ -135,6 +137,7 @@ export default function ContactPage() {
                       <Input
                         id="email"
                         name="email"
+                        autoComplete="email"
                         type="email"
                         required
                         placeholder="ornek@email.com"
@@ -142,12 +145,13 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-2">
                       <Label htmlFor="phone">Telefon</Label>
                       <Input
                         id="phone"
                         name="phone"
+                        autoComplete="tel"
                         type="tel"
                         placeholder="+90 5XX XXX XX XX"
                       />
@@ -171,7 +175,7 @@ export default function ContactPage() {
                       required
                       rows={6}
                       placeholder="Mesajınızı buraya yazın..."
-                      className="resize-none"
+                      className="min-h-[150px] resize-y rounded-xl shadow-none"
                     />
                   </div>
 
@@ -179,64 +183,63 @@ export default function ContactPage() {
                     type="submit"
                     size="lg"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto"
+                    className="h-12 w-full rounded-full px-6 text-sm sm:w-auto"
                   >
                     {isSubmitting ? (
                       "Gönderiliyor..."
                     ) : (
                       <>
-                        <Send className="h-4 w-4 mr-2" />
-                        Mesaj Gönder
+                        Mesajı gönder <ArrowRight aria-hidden="true" className="ml-3 h-4 w-4" />
                       </>
                     )}
                   </Button>
+                  <p className="text-xs text-muted-foreground">* işaretli alanların doldurulması gerekir.</p>
                 </form>
               </div>
             </div>
 
             {/* Contact Info */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-6">İletişim Bilgileri</h2>
+            <div className="min-w-0 border-t border-border pt-7 lg:order-1">
+              <h2 className="mb-7 text-2xl font-medium tracking-tight">Bir mesaj kadar yakınız.</h2>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
               
               {contactInfo.map((item, index) => (
                 <div
                   key={index}
-                  className="flex items-start space-x-4 group"
+                  className="flex min-w-0 items-start gap-4"
                 >
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <item.icon className="h-6 w-6 text-primary" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border">
+                      <item.icon aria-hidden="true" className="h-4 w-4 text-brand-caramel" strokeWidth={1.5} />
                     </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold mb-1">{item.title}</h3>
+                  <div className="min-w-0">
+                    <h3 className="mb-1 text-xs font-medium text-muted-foreground">{item.title}</h3>
                     {item.link ? (
                       <a
                         href={item.link}
-                        className="text-muted-foreground hover:text-primary transition-colors"
+                        className="break-words text-sm leading-6 transition-colors hover:text-brand-caramel"
                       >
                         {item.content}
                       </a>
                     ) : (
-                      <p className="text-muted-foreground">{item.content}</p>
+                      <p className="text-sm leading-6">{item.content}</p>
                     )}
                   </div>
                 </div>
               ))}
+              </div>
 
               {/* Map or Additional Info */}
-              <div className="mt-8 p-6 bg-muted/30 rounded-xl">
-                <h3 className="font-semibold mb-3">Hızlı İletişim</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Acil durumlar için WhatsApp hattımızdan bize ulaşabilirsiniz.
+              <div className="mt-8 rounded-2xl border border-border p-6">
+                <MessageCircle aria-hidden="true" className="mb-4 h-6 w-6 text-brand-caramel" strokeWidth={1.5} />
+                <h3 className="mb-2 text-lg font-medium">Sohbet ederek başlayalım.</h3>
+                <p className="mb-5 text-sm leading-7 text-muted-foreground">
+                  Ürünler hakkında bilgi almak için WhatsApp üzerinden de bize yazabilirsiniz.
                 </p>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => window.open('https://wa.me/905325659667?text=Merhaba, Adataha ürünleri hakkında bilgi almak istiyorum.', '_blank')}
-                >
-                  WhatsApp ile İletişime Geç
-                </Button>
+                <a href="https://wa.me/905325659667?text=Merhaba%2C%20Adataha%20%C3%BCr%C3%BCnleri%20hakk%C4%B1nda%20bilgi%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 text-sm font-medium hover:text-brand-caramel">
+                  WhatsApp’tan yazın <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                </a>
               </div>
             </div>
           </div>
